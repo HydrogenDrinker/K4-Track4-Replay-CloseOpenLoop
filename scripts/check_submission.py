@@ -11,6 +11,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
 ROOT = Path(__file__).resolve().parent.parent
 EVID = ROOT / "evidence"
 FILES = ["data_audit", "replay", "scenarios", "openloop", "closedloop", "agents", "gate", "fix"]
@@ -42,7 +47,7 @@ def report_fields():
     p = ROOT / "REPORT.md"
     if not p.exists():
         return None, None
-    text = p.read_text()
+    text = p.read_text(encoding="utf-8")
     m = re.search(r"\|\s*MSSV[^|]*\|\s*`?([^`|\n]+?)`?\s*\|", text)
     return (m.group(1).strip() if m else None), text
 
@@ -178,7 +183,7 @@ def main():
     print(summary)
     if a.save_verify:
         EVID.mkdir(exist_ok=True)
-        (EVID / "verify.txt").write_text("\n".join(OUT) + summary + "\n")
+        (EVID / "verify.txt").write_text("\n".join(OUT) + summary + "\n", encoding="utf-8")
         print("saved evidence/verify.txt")
     return 1 if fails else 0
 
